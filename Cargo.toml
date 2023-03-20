@@ -1,0 +1,19 @@
+[package]
+name = "image_colored_text"
+version = "0.1.0"
+authors = ["Erwan Mahe"]
+edition = "2021"
+
+license = "Apache-2.0"
+description = "A basic extension of the image/imageproc crates for writing multiline colored text"
+
+readme = "README.md"
+repository = "https://github.com/erwanM974/image_colored_text"
+homepage = "https://github.com/erwanM974/image_colored_text"
+
+keywords = ["image", "color", "text"]
+
+[dependencies]
+image = "0.24.4"                                # for rendering
+imageproc = "0.23.0"                            # ...
+rusttype = "0.9.2"                              # for fonts and scale for text in images
