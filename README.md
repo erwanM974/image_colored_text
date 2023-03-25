@@ -14,7 +14,7 @@ with different options on how to use this position:
 - in the second the text is centered around the anchor
 - in the third example, it is written above and on the left
 
-The horizontal lines correspond to the expected width of the text (I imagine there are approximation errors due to type conversions between ints and floats).
+The horizontal lines correspond to the expected width of the text.
 
 <img src="./README_images/single_line_test.png" alt="drawing single line colored text">
 

@@ -16,7 +16,6 @@ limitations under the License.
 
 
 
-mod font;
 pub mod ttp;
 pub mod draw;
 

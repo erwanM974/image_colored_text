@@ -22,8 +22,10 @@ use image::RgbImage;
 
 use imageproc::drawing::{draw_cross_mut, draw_filled_rect_mut, draw_line_segment_mut};
 use imageproc::rect::Rect;
+use rusttype::{Font, Scale};
 
 use crate::draw::single_line::{draw_line_of_colored_text, DrawCoord};
+use crate::test::font::DRAWING_GRAPHIC_FONT;
 use crate::ttp::TextToPrint;
 
 
@@ -42,6 +44,9 @@ const IMG_HEIGHT : u32 = 200;
 
 #[test]
 pub fn single_line_test() {
+    let font = Font::try_from_bytes(DRAWING_GRAPHIC_FONT).unwrap();
+    let scale = Scale{x:FONT_WIDTH,y:FONT_HEIGHT};
+
     let mut image = RgbImage::new( IMG_WIDTH, IMG_HEIGHT);
     draw_filled_rect_mut(&mut image,
                          Rect::at(0,0).of_size(IMG_WIDTH,IMG_HEIGHT),
@@ -57,10 +62,10 @@ pub fn single_line_test() {
                          TextToPrint::new(format!("{}",y), Rgb(DARK_GREEN))];
         let xpos = DrawCoord::CenteredAround( x as f32 );
         let ypos = DrawCoord::CenteredAround( y as f32 );
-        draw_line_of_colored_text(&mut image,&xpos,&ypos,&to_print,FONT_WIDTH,FONT_HEIGHT);
+        draw_line_of_colored_text(&mut image,&xpos,&ypos,&to_print,&font,&scale);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
         // ***
-        let txt_width = TextToPrint::get_text_width(&to_print,FONT_WIDTH);
+        let txt_width = TextToPrint::get_text_width(&to_print,&font,&scale);
         draw_line_segment_mut(&mut image,
                               ((x as f32) - txt_width/2.0,y as f32),
                               ((x as f32) + txt_width/2.0,y as f32),
@@ -77,10 +82,10 @@ pub fn single_line_test() {
                          TextToPrint::new(format!("{}",y), Rgb(DARK_GREEN))];
         let xpos = DrawCoord::StartingAt( x as f32 );
         let ypos = DrawCoord::StartingAt( y as f32 );
-        draw_line_of_colored_text(&mut image,&xpos,&ypos,&to_print,FONT_WIDTH,FONT_HEIGHT);
+        draw_line_of_colored_text(&mut image,&xpos,&ypos,&to_print,&font,&scale);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
         // ***
-        let txt_width = TextToPrint::get_text_width(&to_print,FONT_WIDTH);
+        let txt_width = TextToPrint::get_text_width(&to_print,&font,&scale);
         draw_line_segment_mut(&mut image,
                               (x as f32,y as f32),
                               ((x as f32) + txt_width,y as f32),
@@ -97,10 +102,10 @@ pub fn single_line_test() {
                          TextToPrint::new(format!("{}",y), Rgb(DARK_GREEN))];
         let xpos = DrawCoord::EndingAt( x as f32 );
         let ypos = DrawCoord::EndingAt( y as f32 );
-        draw_line_of_colored_text(&mut image,&xpos,&ypos,&to_print,FONT_WIDTH,FONT_HEIGHT);
+        draw_line_of_colored_text(&mut image,&xpos,&ypos,&to_print,&font,&scale);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
         // ***
-        let txt_width = TextToPrint::get_text_width(&to_print,FONT_WIDTH);
+        let txt_width = TextToPrint::get_text_width(&to_print,&font,&scale);
         draw_line_segment_mut(&mut image,
                               ((x as f32) - txt_width,y as f32),
                               (x as f32,y as f32),
@@ -108,7 +113,7 @@ pub fn single_line_test() {
     }
 
     // ***
-    let path_buf : PathBuf = ["c:\\", "Users", "EM244186", "IdeaProjects", "colored_text", "single_line_test.png"].iter().collect();
+    let path_buf : PathBuf = ["c:\\", "Users", "ErwanMahe", "IdeaProjects", "image_colored_text", "single_line_test.png"].iter().collect();
     image.save(path_buf.as_path()).unwrap();
 }
 

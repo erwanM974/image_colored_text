@@ -14,12 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+use rusttype::{Font, Scale};
 use image::RgbImage;
 use imageproc::drawing::draw_text_mut;
-use rusttype::{Font, Scale};
 
 
-use crate::font::DRAWING_GRAPHIC_FONT;
 use crate::ttp::TextToPrint;
 
 
@@ -31,20 +30,20 @@ pub enum DrawCoord {
 
 
 pub fn draw_line_of_colored_text(image: &mut RgbImage,
-                         x_pos : &DrawCoord,
-                         y_pos : &DrawCoord,
-                         to_print : &Vec<TextToPrint>,
-                         font_width : f32,
-                         font_height : f32) {
+                                 x_pos : &DrawCoord,
+                                 y_pos : &DrawCoord,
+                                 to_print : &Vec<TextToPrint>,
+                                 font: &Font,
+                                 scale: &Scale) {
     // ***
     let adjusted_x_pos : i32;
     match x_pos {
         DrawCoord::CenteredAround( x ) => {
-            let text_width = TextToPrint::get_text_width(&to_print,font_width);
+            let text_width = TextToPrint::get_text_width(&to_print, font, scale);
             adjusted_x_pos = (x-(text_width/2.0)) as i32;
         },
         DrawCoord::EndingAt( x ) => {
-            let text_width = TextToPrint::get_text_width(&to_print,font_width);
+            let text_width = TextToPrint::get_text_width(&to_print, font, scale);
             adjusted_x_pos = (x-text_width) as i32;
         },
         DrawCoord::StartingAt(x) => {
@@ -54,9 +53,11 @@ pub fn draw_line_of_colored_text(image: &mut RgbImage,
     let adjusted_y_pos : i32;
     match y_pos {
         DrawCoord::CenteredAround( y ) => {
+            let font_height = TextToPrint::get_text_height(font,scale);
             adjusted_y_pos = (y-(font_height/2.0)) as i32;
         },
         DrawCoord::EndingAt( y ) => {
+            let font_height = TextToPrint::get_text_height(font,scale);
             adjusted_y_pos = (y-font_height) as i32;
         },
         DrawCoord::StartingAt(y) => {
@@ -65,9 +66,6 @@ pub fn draw_line_of_colored_text(image: &mut RgbImage,
     }
     // ***
     {
-        let font = Font::try_from_bytes(DRAWING_GRAPHIC_FONT).unwrap();
-        let scale = Scale { x: font_width, y: font_height };
-        // ***
         let mut char_count : usize = 0;
         for txt_to_print in to_print {
             let mut my_text : String = (0..char_count).map(|_| " ").collect::<String>();
@@ -76,7 +74,7 @@ pub fn draw_line_of_colored_text(image: &mut RgbImage,
                           txt_to_print.color,
                           adjusted_x_pos,
                           adjusted_y_pos,
-                          scale,
+                          scale.clone(),
                           &font,
                           &my_text
             );

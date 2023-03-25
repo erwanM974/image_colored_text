@@ -22,9 +22,11 @@ use image::RgbImage;
 
 use imageproc::drawing::{draw_cross_mut, draw_filled_rect_mut};
 use imageproc::rect::Rect;
+use rusttype::{Font, Scale};
 
 use crate::draw::multi_line::{draw_multiline_colored_text, MultiLineTextAlignment};
 use crate::draw::single_line::DrawCoord;
+use crate::test::font::DRAWING_GRAPHIC_FONT;
 use crate::ttp::TextToPrint;
 
 
@@ -46,6 +48,9 @@ const IMG_HEIGHT : u32 = 400;
 
 #[test]
 pub fn multi_line_test() {
+    let font = Font::try_from_bytes(DRAWING_GRAPHIC_FONT).unwrap();
+    let scale = Scale{x:FONT_WIDTH,y:FONT_HEIGHT};
+
     let mut image = RgbImage::new( IMG_WIDTH, IMG_HEIGHT);
     draw_filled_rect_mut(&mut image,
                          Rect::at(0,0).of_size(IMG_WIDTH,IMG_HEIGHT),
@@ -61,7 +66,7 @@ pub fn multi_line_test() {
         ];
         let xpos = DrawCoord::CenteredAround( x as f32 );
         let ypos = DrawCoord::CenteredAround( y as f32 );
-        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Center, &to_print,FONT_WIDTH,FONT_HEIGHT);
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Center, &to_print,&font,&scale);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
     }
 
@@ -75,7 +80,7 @@ pub fn multi_line_test() {
         ];
         let xpos = DrawCoord::StartingAt( x as f32 );
         let ypos = DrawCoord::StartingAt( y as f32 );
-        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Left,&to_print,FONT_WIDTH,FONT_HEIGHT);
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Left,&to_print,&font,&scale);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
     }
 
@@ -89,12 +94,12 @@ pub fn multi_line_test() {
         ];
         let xpos = DrawCoord::EndingAt( x as f32 );
         let ypos = DrawCoord::EndingAt( y as f32 );
-        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Right, &to_print,FONT_WIDTH,FONT_HEIGHT);
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Right, &to_print,&font,&scale);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
     }
 
     // ***
-    let path_buf : PathBuf = ["c:\\", "Users", "EM244186", "IdeaProjects", "colored_text", "multi_line_test.png"].iter().collect();
+    let path_buf : PathBuf = ["c:\\", "Users", "ErwanMahe", "IdeaProjects", "image_colored_text", "multi_line_test.png"].iter().collect();
     image.save(path_buf.as_path()).unwrap();
 }
 

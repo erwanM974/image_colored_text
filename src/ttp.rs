@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
+use rusttype::{point, Font, Scale};
 use image::Rgb;
 
 
@@ -47,8 +47,23 @@ impl TextToPrint {
         return count;
     }
 
-    pub fn get_text_width(to_print : &Vec<TextToPrint>, font_width : f32) -> f32 {
-        return (TextToPrint::char_count(&to_print) as f32)*font_width/2.0;
+    pub fn get_text_width(to_print : &Vec<TextToPrint>,
+                          font: &Font,
+                          scale: &Scale) -> f32 {
+        let flattened = Self::flatten(to_print);
+        let width = font
+            .layout(&flattened, scale.clone(), point(0.0, 0.0))
+            .map(|g| g.position().x + g.unpositioned().h_metrics().advance_width)
+            .last()
+            .unwrap_or(0.0);
+        return width;
+    }
+
+    pub fn get_text_height(font: &Font,
+                           scale: &Scale) -> f32 {
+        let v_metrics = font.v_metrics(scale.clone());
+        let height = v_metrics.ascent - v_metrics.descent + v_metrics.line_gap;
+        return height;
     }
 
 }

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
+use rusttype::{Font, Scale};
 use image::RgbImage;
 
 
@@ -35,9 +35,10 @@ pub fn draw_multiline_colored_text(image: &mut RgbImage,
                                    y_pos : &DrawCoord,
                                    alignment : &MultiLineTextAlignment,
                                    to_print : &Vec<Vec<TextToPrint>>,
-                                   font_width : f32,
-                                   font_height : f32) {
+                                   font: &Font,
+                                   scale: &Scale) {
     // ***
+    let font_height = TextToPrint::get_text_height(font,scale);
     let adjusted_first_line_y_pos : f32;
     match y_pos {
         DrawCoord::CenteredAround( y ) => {
@@ -53,9 +54,10 @@ pub fn draw_multiline_colored_text(image: &mut RgbImage,
         }
     }
     // ***
-    let max_text_width : f32 = to_print.iter().fold(0.0,
-                                                    |prev,ttp|
-                                                        prev.max(TextToPrint::get_text_width(ttp,font_width)));
+    let max_text_width : f32 = to_print.iter()
+        .fold(0.0,
+              |prev,ttp|
+                  prev.max(TextToPrint::get_text_width(ttp,font, scale)));
     let adjusted_left_x_pos : f32;
     match x_pos {
         DrawCoord::CenteredAround( x ) => {
@@ -87,7 +89,7 @@ pub fn draw_multiline_colored_text(image: &mut RgbImage,
                 ttp_x_pos = DrawCoord::CenteredAround(adjusted_left_x_pos + (max_text_width/2.0));
             }
         }
-        draw_line_of_colored_text(image,&ttp_x_pos,&ttp_y_pos,ttp,font_width,font_height);
+        draw_line_of_colored_text(image,&ttp_x_pos,&ttp_y_pos,ttp,font,scale);
     }
 
 }
