@@ -22,5 +22,5 @@ pub mod draw;
 
 
 #[cfg(test)]
-pub mod test;
+mod test;
 

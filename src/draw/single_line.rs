@@ -36,34 +36,33 @@ pub fn draw_line_of_colored_text(image: &mut RgbImage,
                                  font: &Font,
                                  scale: &Scale) {
     // ***
-    let adjusted_x_pos : i32;
-    match x_pos {
+    let adjusted_x_pos : i32 = match x_pos {
         DrawCoord::CenteredAround( x ) => {
-            let text_width = TextToPrint::get_text_width(&to_print, font, scale);
-            adjusted_x_pos = (x-(text_width/2.0)) as i32;
+            let text_width = TextToPrint::get_text_width(to_print, font, scale);
+            (x-(text_width/2.0)) as i32
         },
         DrawCoord::EndingAt( x ) => {
-            let text_width = TextToPrint::get_text_width(&to_print, font, scale);
-            adjusted_x_pos = (x-text_width) as i32;
+            let text_width = TextToPrint::get_text_width(to_print, font, scale);
+            (x-text_width) as i32
         },
         DrawCoord::StartingAt(x) => {
-            adjusted_x_pos = *x as i32;
+            *x as i32
         }
-    }
-    let adjusted_y_pos : i32;
-    match y_pos {
+    };
+    // ***
+    let adjusted_y_pos : i32 = match y_pos {
         DrawCoord::CenteredAround( y ) => {
             let font_height = TextToPrint::get_text_height(font,scale);
-            adjusted_y_pos = (y-(font_height/2.0)) as i32;
+            (y-(font_height/2.0)) as i32
         },
         DrawCoord::EndingAt( y ) => {
             let font_height = TextToPrint::get_text_height(font,scale);
-            adjusted_y_pos = (y-font_height) as i32;
+            (y-font_height) as i32
         },
         DrawCoord::StartingAt(y) => {
-            adjusted_y_pos = *y as i32;
+            *y as i32
         }
-    }
+    };
     // ***
     {
         let mut char_count : usize = 0;
@@ -74,11 +73,11 @@ pub fn draw_line_of_colored_text(image: &mut RgbImage,
                           txt_to_print.color,
                           adjusted_x_pos,
                           adjusted_y_pos,
-                          scale.clone(),
-                          &font,
+                          *scale,
+                          font,
                           &my_text
             );
-            char_count = char_count + txt_to_print.text.chars().count();
+            char_count += txt_to_print.text.chars().count();
         }
     }
 }

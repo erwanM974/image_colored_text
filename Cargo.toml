@@ -1,6 +1,6 @@
 [package]
 name = "image_colored_text"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Erwan Mahe"]
 edition = "2021"
 

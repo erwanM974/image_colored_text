@@ -28,7 +28,7 @@ impl TextToPrint {
 
     pub fn new(text : String,
                color : Rgb<u8>) -> TextToPrint {
-        return TextToPrint{text,color};
+        TextToPrint{text,color}
     }
 
     pub fn flatten(to_print : &Vec<TextToPrint>) -> String {
@@ -36,15 +36,15 @@ impl TextToPrint {
         for ttp in to_print {
             flattened.push_str(&ttp.text);
         }
-        return flattened;
+        flattened
     }
 
     pub fn char_count(to_print : &Vec<TextToPrint>) -> usize {
         let mut count : usize = 0;
         for ttp in to_print {
-            count = count + ttp.text.chars().count();
+            count += ttp.text.chars().count();
         }
-        return count;
+        count
     }
 
     pub fn get_text_width(to_print : &Vec<TextToPrint>,
@@ -52,18 +52,17 @@ impl TextToPrint {
                           scale: &Scale) -> f32 {
         let flattened = Self::flatten(to_print);
         let width = font
-            .layout(&flattened, scale.clone(), point(0.0, 0.0))
+            .layout(&flattened, *scale, point(0.0, 0.0))
             .map(|g| g.position().x + g.unpositioned().h_metrics().advance_width)
             .last()
             .unwrap_or(0.0);
-        return width;
+        width
     }
 
     pub fn get_text_height(font: &Font,
                            scale: &Scale) -> f32 {
-        let v_metrics = font.v_metrics(scale.clone());
-        let height = v_metrics.ascent - v_metrics.descent + v_metrics.line_gap;
-        return height;
+        let v_metrics = font.v_metrics(*scale);
+        v_metrics.ascent - v_metrics.descent + v_metrics.line_gap
     }
 
 }
