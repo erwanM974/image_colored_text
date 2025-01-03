@@ -14,70 +14,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-use rusttype::{Font, Scale};
+use ab_glyph::{Font, PxScale};
 use image::RgbImage;
 use imageproc::drawing::draw_text_mut;
 
+use crate::draw::coord::DrawCoord;
+use crate::text::line::ColoredTextLine;
 
-use crate::ttp::TextToPrint;
 
 
-pub enum DrawCoord {
-    StartingAt(f32),
-    EndingAt(f32),
-    CenteredAround(f32)
-}
 
 
 pub fn draw_line_of_colored_text(image: &mut RgbImage,
                                  x_pos : &DrawCoord,
                                  y_pos : &DrawCoord,
-                                 to_print : &Vec<TextToPrint>,
-                                 font: &Font,
-                                 scale: &Scale) {
+                                 to_print : &ColoredTextLine,
+                                 font: &impl Font,
+                                 scale: impl Into<PxScale> + Copy) {
     // ***
-    let adjusted_x_pos : i32 = match x_pos {
-        DrawCoord::CenteredAround( x ) => {
-            let text_width = TextToPrint::get_text_width(to_print, font, scale);
-            (x-(text_width/2.0)) as i32
-        },
-        DrawCoord::EndingAt( x ) => {
-            let text_width = TextToPrint::get_text_width(to_print, font, scale);
-            (x-text_width) as i32
-        },
-        DrawCoord::StartingAt(x) => {
-            *x as i32
-        }
-    };
-    // ***
-    let adjusted_y_pos : i32 = match y_pos {
-        DrawCoord::CenteredAround( y ) => {
-            let font_height = TextToPrint::get_text_height(font,scale);
-            (y-(font_height/2.0)) as i32
-        },
-        DrawCoord::EndingAt( y ) => {
-            let font_height = TextToPrint::get_text_height(font,scale);
-            (y-font_height) as i32
-        },
-        DrawCoord::StartingAt(y) => {
-            *y as i32
-        }
-    };
+    let (text_width,font_height) = to_print.line_size(scale, font);
+    let (adjusted_x_pos,adjusted_y_pos) = DrawCoord::get_adjusted_object_top_left_corner(x_pos, y_pos, text_width, font_height);
     // ***
     {
         let mut char_count : usize = 0;
-        for txt_to_print in to_print {
+        for (text,color) in &to_print.colored_segments {
             let mut my_text : String = (0..char_count).map(|_| " ").collect::<String>();
-            my_text.push_str( &txt_to_print.text );
+            my_text.push_str( text );
             draw_text_mut(image,
-                          txt_to_print.color,
-                          adjusted_x_pos,
-                          adjusted_y_pos,
-                          *scale,
+                          *color,
+                          adjusted_x_pos as i32,
+                          adjusted_y_pos as i32,
+                          scale,
                           font,
                           &my_text
             );
-            char_count += txt_to_print.text.chars().count();
+            char_count += text.chars().count();
         }
     }
 }

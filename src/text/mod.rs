@@ -14,5 +14,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-pub const DRAWING_GRAPHIC_FONT: &'static [u8] = include_bytes!("DejaVuSansMono.ttf");
-
+pub mod line; 
+pub mod paragraph; 

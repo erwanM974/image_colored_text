@@ -22,23 +22,15 @@ use image::RgbImage;
 
 use imageproc::drawing::{draw_cross_mut, draw_filled_rect_mut};
 use imageproc::rect::Rect;
-use rusttype::{Font, Scale};
 
-use crate::draw::multi_line::{draw_multiline_colored_text, MultiLineTextAlignment};
-use crate::draw::single_line::DrawCoord;
-use crate::test::font::DRAWING_GRAPHIC_FONT;
-use crate::ttp::TextToPrint;
+use crate::draw::multi_line::draw_multiline_colored_text;
+use crate::draw::coord::DrawCoord;
+use crate::test::commons::*;
+
+use crate::text::line::ColoredTextLine;
+use crate::text::paragraph::{ColoredTextParagraph,MultiLineTextAlignment};
 
 
-
-const DARK_RED : [u8;3] = [86u8, 15u8, 15u8];
-const DARK_GREEN : [u8;3] = [15u8, 86u8, 15u8];
-const DARK_BLUE : [u8;3] = [15u8, 15u8, 86u8];
-const BLACK : [u8;3] = [0u8, 0u8, 0u8];
-const WHITE : [u8;3] = [255u8,  255u8,  255u8];
-
-const FONT_WIDTH : f32 = 20.0;
-const FONT_HEIGHT : f32 = 20.0;
 
 const IMG_WIDTH : u32 = 200;
 const IMG_HEIGHT : u32 = 400;
@@ -48,8 +40,7 @@ const IMG_HEIGHT : u32 = 400;
 
 #[test]
 pub fn multi_line_test() {
-    let font = Font::try_from_bytes(DRAWING_GRAPHIC_FONT).unwrap();
-    let scale = Scale{x:FONT_WIDTH,y:FONT_HEIGHT};
+    let font = ab_glyph::FontRef::try_from_slice(DRAWING_GRAPHIC_FONT).unwrap();
 
     let mut image = RgbImage::new( IMG_WIDTH, IMG_HEIGHT);
     draw_filled_rect_mut(&mut image,
@@ -59,48 +50,151 @@ pub fn multi_line_test() {
     {
         let x = 100;
         let y = 200;
-        let to_print = vec![
-            vec![TextToPrint::new("xcent".to_string(), Rgb(DARK_RED)),TextToPrint::new(format!("{}",x), Rgb(DARK_GREEN))],
-            vec![TextToPrint::new(";".to_string(), Rgb(DARK_BLUE))],
-            vec![TextToPrint::new("ycent".to_string(), Rgb(DARK_RED)),TextToPrint::new(format!("{}",y), Rgb(DARK_GREEN))]
-        ];
+        let line1 = ColoredTextLine::new(vec![("xcent".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("ycent".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Center, None, None);
         let xpos = DrawCoord::CenteredAround( x as f32 );
         let ypos = DrawCoord::CenteredAround( y as f32 );
-        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Center, &to_print,&font,&scale);
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
     }
 
     {
         let x = 25;
         let y = 50;
-        let to_print = vec![
-            vec![TextToPrint::new("xstart".to_string(), Rgb(DARK_RED)),TextToPrint::new(format!("{}",x), Rgb(DARK_GREEN))],
-            vec![TextToPrint::new(";".to_string(), Rgb(DARK_BLUE))],
-            vec![TextToPrint::new("ystart".to_string(), Rgb(DARK_RED)),TextToPrint::new(format!("{}",y), Rgb(DARK_GREEN))]
-        ];
+        let line1 = ColoredTextLine::new(vec![("xstart".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("ystart".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Left, None, None);
         let xpos = DrawCoord::StartingAt( x as f32 );
         let ypos = DrawCoord::StartingAt( y as f32 );
-        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Left,&to_print,&font,&scale);
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
     }
 
     {
         let x = 175;
         let y = 350;
-        let to_print = vec![
-            vec![TextToPrint::new("xend".to_string(), Rgb(DARK_RED)),TextToPrint::new(format!("{}",x), Rgb(DARK_GREEN))],
-            vec![TextToPrint::new(";".to_string(), Rgb(DARK_BLUE))],
-            vec![TextToPrint::new("yend".to_string(), Rgb(DARK_RED)),TextToPrint::new(format!("{}",y), Rgb(DARK_GREEN))]
-        ];
+        let line1 = ColoredTextLine::new(vec![("xend".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("yend".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Right, None, None);
         let xpos = DrawCoord::EndingAt( x as f32 );
         let ypos = DrawCoord::EndingAt( y as f32 );
-        draw_multiline_colored_text(&mut image,&xpos,&ypos,&MultiLineTextAlignment::Right, &to_print,&font,&scale);
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
         draw_cross_mut(&mut image,Rgb(BLACK),x,y);
     }
 
     // ***
-    let path_buf : PathBuf = ["c:\\", "Users", "ErwanMahe", "IdeaProjects", "image_colored_text", "multi_line_test.png"].iter().collect();
+    let path_buf : PathBuf = ["/home", "stan", "vscodium_projects", "image_colored_text", "multi_line_test.png"].iter().collect();
     image.save(path_buf.as_path()).unwrap();
 }
 
 
+
+#[test]
+pub fn multi_line_test_with_background() {
+    let font = ab_glyph::FontRef::try_from_slice(DRAWING_GRAPHIC_FONT).unwrap();
+
+    let mut image = RgbImage::new( IMG_WIDTH, IMG_HEIGHT);
+    draw_filled_rect_mut(&mut image,
+                         Rect::at(0,0).of_size(IMG_WIDTH,IMG_HEIGHT),
+                         Rgb(WHITE));
+
+    {
+        let x = 100;
+        let y = 200;
+        let line1 = ColoredTextLine::new(vec![("xcent".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("ycent".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Center, Some(Rgb(OLD_PAPER)), None);
+        let xpos = DrawCoord::CenteredAround( x as f32 );
+        let ypos = DrawCoord::CenteredAround( y as f32 );
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
+        draw_cross_mut(&mut image,Rgb(BLACK),x,y);
+    }
+
+    {
+        let x = 25;
+        let y = 50;
+        let line1 = ColoredTextLine::new(vec![("xstart".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("ystart".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Left, Some(Rgb(OLD_PAPER)), None);
+        let xpos = DrawCoord::StartingAt( x as f32 );
+        let ypos = DrawCoord::StartingAt( y as f32 );
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
+        draw_cross_mut(&mut image,Rgb(BLACK),x,y);
+    }
+
+    {
+        let x = 175;
+        let y = 350;
+        let line1 = ColoredTextLine::new(vec![("xend".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("yend".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Right, Some(Rgb(OLD_PAPER)), None);
+        let xpos = DrawCoord::EndingAt( x as f32 );
+        let ypos = DrawCoord::EndingAt( y as f32 );
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
+        draw_cross_mut(&mut image,Rgb(BLACK),x,y);
+    }
+    // ***
+    let path_buf : PathBuf = ["/home", "stan", "vscodium_projects", "image_colored_text", "multi_line_test_with_background.png"].iter().collect();
+    image.save(path_buf.as_path()).unwrap();
+}
+
+
+
+#[test]
+pub fn multi_line_test_with_background_and_border() {
+    let font = ab_glyph::FontRef::try_from_slice(DRAWING_GRAPHIC_FONT).unwrap();
+
+    let mut image = RgbImage::new( IMG_WIDTH, IMG_HEIGHT);
+    draw_filled_rect_mut(&mut image,
+                         Rect::at(0,0).of_size(IMG_WIDTH,IMG_HEIGHT),
+                         Rgb(WHITE));
+
+    {
+        let x = 100;
+        let y = 200;
+        let line1 = ColoredTextLine::new(vec![("xcent".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("ycent".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Center, Some(Rgb(OLD_PAPER)), Some(Rgb(BLACK)));
+        let xpos = DrawCoord::CenteredAround( x as f32 );
+        let ypos = DrawCoord::CenteredAround( y as f32 );
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
+        draw_cross_mut(&mut image,Rgb(BLACK),x,y);
+    }
+
+    {
+        let x = 25;
+        let y = 50;
+        let line1 = ColoredTextLine::new(vec![("xstart".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("ystart".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Left, Some(Rgb(OLD_PAPER)), Some(Rgb(BLACK)));
+        let xpos = DrawCoord::StartingAt( x as f32 );
+        let ypos = DrawCoord::StartingAt( y as f32 );
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
+        draw_cross_mut(&mut image,Rgb(BLACK),x,y);
+    }
+
+    {
+        let x = 175;
+        let y = 350;
+        let line1 = ColoredTextLine::new(vec![("xend".to_string(), Rgb(DARK_RED)),(format!("{}",x), Rgb(DARK_GREEN))]);
+        let line2 = ColoredTextLine::new(vec![(";".to_string(), Rgb(DARK_BLUE))]);
+        let line3 = ColoredTextLine::new(vec![("yend".to_string(), Rgb(DARK_RED)),(format!("{}",y), Rgb(DARK_GREEN))]);
+        let to_print = ColoredTextParagraph::new(vec![line1,line2,line3], MultiLineTextAlignment::Right, Some(Rgb(OLD_PAPER)), Some(Rgb(BLACK)));
+        let xpos = DrawCoord::EndingAt( x as f32 );
+        let ypos = DrawCoord::EndingAt( y as f32 );
+        draw_multiline_colored_text(&mut image,&xpos,&ypos,&to_print,&font,SCALE);
+        draw_cross_mut(&mut image,Rgb(BLACK),x,y);
+    }
+    // ***
+    let path_buf : PathBuf = ["/home", "stan", "vscodium_projects", "image_colored_text", "multi_line_test_with_background_and_border.png"].iter().collect();
+    image.save(path_buf.as_path()).unwrap();
+}

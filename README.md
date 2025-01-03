@@ -27,6 +27,13 @@ We also provide a means to specify the text alignment which is:
 - centered for the second
 - on the right for the third
 
-<img src="./README_images/multi_line_test.png" alt="drawing single line colored text">
+<img src="./README_images/multi_line_test.png" alt="drawing multi lines colored text">
+
+It is also possible to specify a background color:
+
+<img src="./README_images/multi_line_test_with_background.png" alt="drawing multi lines colored text with background color">
 
 
+And borders that can also be colored (here black) :
+
+<img src="./README_images/multi_line_test_with_background_and_border.png" alt="drawing multi lines colored text with background color and border">
